@@ -1,5 +1,6 @@
 import json
 import requests
+import hashlib
 
 
 class CountriesIter:
@@ -46,8 +47,16 @@ class CountriesIter:
         return respose.json()['query']['pages'][str(page_id)]['canonicalurl']
 
 
+def md5_iter(path):
+    with open(path, mode='r', encoding='utf-8') as file:
+        for line in file:
+            yield hashlib.md5(line.encode(encoding='utf-8')).hexdigest()
+
+
 if __name__ == '__main__':
     countries = CountriesIter('countries.json')
     with open('out.txt', mode='w', encoding='utf-8') as file:
-       for country in countries:
-           file.write(country + '\n')
+        for country in countries:
+            file.write(country + '\n')
+    for line in md5_iter('out.txt'):
+        print(line)
